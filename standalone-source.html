@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DCH Construction — Redesign Explorations</title>
+
+  <!-- Bundler dependencies — resources referenced from JS, not HTML attrs -->
+  <meta name="ext-resource-dependency" content="logo-light.png" data-resource-id="logoLight" />
+  <meta name="ext-resource-dependency" content="logo-dark.png" data-resource-id="logoDark" />
+  <meta name="ext-resource-dependency" content=".image-slots.state.json" data-resource-id="imageSlotsState" />
+
+  <!-- Fonts: cover the 4 pairings the user can choose between -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Bricolage+Grotesque:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="option-a.css" />
+  <link rel="stylesheet" href="option-b.css" />
+  <link rel="stylesheet" href="option-c.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Fetch interceptor — image-slot.js loads its persisted state via fetch(); redirect to the bundled blob URL -->
+  <script>
+    (() => {
+      const originalFetch = window.fetch;
+      window.fetch = function(input, init) {
+        const url = typeof input === 'string' ? input : (input && input.url) || '';
+        if (window.__resources && window.__resources.imageSlotsState &&
+            (url === '.image-slots.state.json' || url.endsWith('/.image-slots.state.json'))) {
+          return originalFetch(window.__resources.imageSlotsState, init);
+        }
+        return originalFetch(input, init);
+      };
+    })();
+  </script>
+
+  <script src="data.js"></script>
+  <script src="image-slot.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    // Tweak defaults — written back to disk by the host when the user changes them.
+    window.__TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "option": "A",
+      "theme": "dark",
+      "accent": "#4a7fb8",
+      "fontPair": "editorial",
+      "radius": 8,
+      "gridDensity": "regular",
+      "hero": "split",
+      "spacing": 1,
+      "showReviews": true,
+      "ctaStyle": "filled",
+      "motion": "on"
+    }/*EDITMODE-END*/;
+  </script>
+
+  <script type="text/babel" src="shared.jsx"></script>
+  <script type="text/babel" src="option-a.jsx"></script>
+  <script type="text/babel" src="option-b.jsx"></script>
+  <script type="text/babel" src="option-c.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+
+  <template id="__bundler_thumbnail" data-bg-color="#010102">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <!-- House silhouette + DCH wordmark, white on near-black canvas -->
+      <g fill="#f7f8f8">
+        <!-- Roof line -->
+        <path d="M 220 320 L 600 180 L 980 320 L 950 340 L 600 215 L 250 340 Z" />
+        <!-- DCH letters -->
+        <g transform="translate(330,420)">
+          <!-- D -->
+          <path d="M 0 0 L 80 0 C 130 0 160 35 160 95 C 160 155 130 190 80 190 L 0 190 Z M 35 32 L 35 158 L 75 158 C 105 158 125 138 125 95 C 125 52 105 32 75 32 Z" />
+          <!-- C -->
+          <path d="M 220 95 C 220 38 258 0 312 0 C 348 0 378 17 392 44 L 364 60 C 355 44 336 32 312 32 C 280 32 256 56 256 95 C 256 134 280 158 312 158 C 336 158 355 146 364 130 L 392 146 C 378 173 348 190 312 190 C 258 190 220 152 220 95 Z" />
+          <!-- H -->
+          <path d="M 440 0 L 475 0 L 475 78 L 555 78 L 555 0 L 590 0 L 590 190 L 555 190 L 555 110 L 475 110 L 475 190 L 440 190 Z" />
+        </g>
+        <!-- "CONSTRUCTION" -->
+        <text x="600" y="660" text-anchor="middle" font-family="ui-sans-serif, system-ui" font-size="36" letter-spacing="14" fill="#8a8f98">CONSTRUCTION</text>
+      </g>
+    </svg>
+  </template>
+</body>
+</html>
